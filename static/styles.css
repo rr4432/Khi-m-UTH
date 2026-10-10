@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HouseValue - Tìm nhà</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="container nav">
+        <div class="brand">HouseValue</div>
+        <nav>
+          <a href="#">Trang chủ</a>
+          <a href="#">Mua bán</a>
+          <a href="#">Cho thuê</a>
+          <a href="#">Dự đoán</a>
+        </nav>
+        <button class="primary-btn">Đăng tin</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="container hero-inner">
+          <div class="hero-copy">
+            <span class="badge">Tìm nhà thông minh</span>
+            <h1>Tìm căn nhà phù hợp với nhu cầu của bạn</h1>
+            <p>
+              Khám phá các bất động sản mới nhất, tìm kiếm theo vị trí, mức giá,
+              diện tích và số phòng ngủ.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="search-panel">
+        <div class="container">
+          <form class="search-form" method="GET" action="/">
+            <div class="field">
+              <label>Vị trí</label>
+              <input type="text" name="location" value="{{ filters.location }}" placeholder="Ví dụ: Quận 7" />
+            </div>
+            <div class="field">
+              <label>Giá tối thiểu</label>
+              <input type="number" name="min_price" value="{{ filters.min_price }}" placeholder="0" />
+            </div>
+            <div class="field">
+              <label>Giá tối đa</label>
+              <input type="number" name="max_price" value="{{ filters.max_price if filters.max_price != 999999999999 else '' }}" placeholder="5000000000" />
+            </div>
+            <div class="field">
+              <label>Phòng ngủ</label>
+              <input type="number" name="bedrooms" value="{{ filters.bedrooms }}" min="0" placeholder="0" />
+            </div>
+            <div class="field">
+              <label>Loại nhà</label>
+              <select name="property_type">
+                <option value="all" {% if filters.property_type == 'all' %}selected{% endif %}>Tất cả</option>
+                <option value="Apartment" {% if filters.property_type == 'Apartment' %}selected{% endif %}>Apartment</option>
+                <option value="Villa" {% if filters.property_type == 'Villa' %}selected{% endif %}>Villa</option>
+                <option value="Townhouse" {% if filters.property_type == 'Townhouse' %}selected{% endif %}>Townhouse</option>
+                <option value="House" {% if filters.property_type == 'House' %}selected{% endif %}>House</option>
+                <option value="Land" {% if filters.property_type == 'Land' %}selected{% endif %}>Land</option>
+              </select>
+            </div>
+            <button class="search-btn" type="submit">Tìm kiếm</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="listing">
+        <div class="container">
+          <div class="results-header">
+            <h2>Danh sách bất động sản</h2>
+            <span>{{ houses|length }} kết quả</span>
+          </div>
+
+          <div class="card-grid">
+            {% for house in houses %}
+            <article class="property-card">
+              <img src="{{ house.image_url or 'https://images.unsplash.com/photo-1560518883-ce09059eeffa?auto=format&fit=crop&w=900&q=80' }}" alt="{{ house.title }}" />
+              <div class="card-body">
+                <div class="card-top">
+                  <span class="tag">{{ house.property_type }}</span>
+                  <span class="price">{{ '{:,.0f}'.format(house.price) }}₫</span>
+                </div>
+                <h3>{{ house.title }}</h3>
+                <p class="location">📍 {{ house.location }}</p>
+                <p class="meta">{{ house.bedrooms }} PN • {{ house.bathrooms }} WC • {{ house.area }} m²</p>
+                <p class="desc">{{ house.description }}</p>
+              </div>
+            </article>
+            {% else %}
+            <div class="empty-state">
+              <h3>Không tìm thấy bất động sản phù hợp</h3>
+              <p>Hãy thử thay đổi bộ lọc hoặc chọn khoảng giá khác.</p>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>
